@@ -9,6 +9,10 @@
 #include "Util.h"
 
 class RegisterStatus {
+public:
+    void recordFunctionUnitToRegisterResultMap(RegisterIdx registerIdx, Component component);
+
+    void removeFunctionUnitFromRegisterResultMap(RegisterIdx registerIdx);
 
 private:
     std::unordered_map<RegisterIdx, Component> RegisterResultMap;

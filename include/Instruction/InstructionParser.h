@@ -6,11 +6,12 @@
 #define SCOREBOARD_INSTRUCTIONPARSE_H
 
 #include <deque>
+#include <memory>
 #include "Instruction/Instruction.h"
 
 class InstructionParser {
 public:
-    parseInstruction(char *instructionFilePath);
+    void parseInstruction(std::deque<std::shared_ptr<Instruction>> &InstructionVec,char *instructionFilePath);
 
 };
 

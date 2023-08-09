@@ -11,7 +11,9 @@ class Instruction;
 
 class PipelineRegister {
 public:
-    void acceptInstruction(Instruction *instruction);
+    void acceptInstruction(std::shared_ptr<Instruction> instruction);
+
+    std::shared_ptr<Instruction> &getInstruction();
 
 private:
     std::shared_ptr<Instruction> instruction;

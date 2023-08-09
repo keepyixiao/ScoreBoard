@@ -4,7 +4,12 @@
 
 #include "Component/PipelineRegister.h"
 
-void PipelineRegister::acceptInstruction(Instruction *instruction) {
+void PipelineRegister::acceptInstruction(std::shared_ptr<Instruction> instruction) {
     this->instruction = instruction;
+}
+
+
+std::shared_ptr<Instruction> &PipelineRegister::getInstruction() {
+    return instruction;
 }
 

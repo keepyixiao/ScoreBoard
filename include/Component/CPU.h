@@ -5,7 +5,7 @@
 #ifndef SCOREBOARD_CPU_H
 #define SCOREBOARD_CPU_H
 
-#include "ScoreBoard.h"
+#include "RegisterStatus.h"
 #include "Instruction/Instruction.h"
 #include "FunctionUnit.h"
 #include "PipelineRegister.h"
@@ -17,25 +17,33 @@
 class CPU {
 
 private:
-    int totalCycle;
-    std::unique_ptr<ScoreBoard> scoreBoard;
+    int totalCycle = 0;
     std::deque<std::shared_ptr<Instruction>> InstructionVec;
     std::deque<std::shared_ptr<Instruction>> onProcessingInstVec;
     std::vector<std::shared_ptr<Instruction>> finishedInstVec;
 
 
-    std::unique_ptr<FunctionUnit> MulUnitOne;
-    std::unique_ptr<FunctionUnit> MulUnitTwo;
-    std::unique_ptr<FunctionUnit> DivUnit;
-    std::unique_ptr<FunctionUnit> AddUnit;
-    std::unique_ptr<FunctionUnit> IntegerUnit;
+    std::shared_ptr<FunctionUnit> MulUnitOne;
+    std::shared_ptr<FunctionUnit> MulUnitTwo;
+    std::shared_ptr<FunctionUnit> DivUnit;
+    std::shared_ptr<FunctionUnit> AddUnit;
+    std::shared_ptr<FunctionUnit> IntegerUnit;
+
+    std::vector<std::shared_ptr<FunctionUnit>> unitVec;
 
     std::unique_ptr<PipelineRegister> InstructionRegister;
 
     std::unique_ptr<InstructionParser> instructionParser;
 
+    std::unique_ptr<RegisterStatus> registerStatus;
+
 
 public:
+
+    void initCPU();
+
+    bool terminated();
+
     void execute();
 
     void executeIssue();
@@ -46,7 +54,13 @@ public:
 
     void executeWrite();
 
+    bool existWARDependence(std::shared_ptr<FunctionUnit> & functionUnit);
+
     std::unique_ptr<InstructionParser> &getInstructionParser();
+
+    std::deque<std::shared_ptr<Instruction>> &getInstructionVec();
+
+    std::unique_ptr<RegisterStatus> & getRegisterStatus();
 
 
 };

@@ -12,12 +12,28 @@
 
 class FunctionUnit {
 public:
+    bool isBusy();
+
+    void setBusy(bool busy);
+
+    RegisterIdx getDestReg();
+
+    RegisterIdx getSourceOneReg();
+
+    RegisterIdx getSourceTwoReg();
+
+    std::shared_ptr<Instruction> &getInstruction();
+
+    void acceptInstruction(std::shared_ptr<Instruction> instruction);
+
+    bool isSourceOneRead();
+
+    bool isSourceTwoRead();
+
 
 private:
     std::shared_ptr<FunctionUnitStatus> functionUnitStatus;
-    std::shared_ptr<PipelineRegister> IssueToReadRegister;
-    std::shared_ptr<PipelineRegister> ReadToExeRegister;
-    std::shared_ptr<PipelineRegister> ExeToWbRegister;
+    std::shared_ptr<Instruction> instruction;
 };
 
 #endif //SCOREBOARD_UNIT_H

@@ -7,7 +7,8 @@
 
 int main(int argc, char **argv) {
     std::unique_ptr<CPU> executor = std::make_unique<CPU>();
-    executor->getInstructionParser()->parseInstruction(argv[0]);
+    executor->getInstructionParser()->parseInstruction(executor->getInstructionVec(), argv[0]);
+    executor->initCPU();
     executor->execute();
     return 0;
 }
