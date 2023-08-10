@@ -57,7 +57,13 @@ void CPU::executeIssue() {
 }
 
 void CPU::executeRead() {
-
+    for (auto &unit :unitVec) {
+        if (unit->isBusy() && unit->getInstruction()->getStage() == Stage::ReadOperand) {
+            if (unit->getSourceOneReady() && unit->getSourceTwoReady()) {
+                unit->getInstruction()->setStage(Stage::ExecComp);
+            }
+        }
+    }
 }
 
 void CPU::executeExecute() {
@@ -72,6 +78,7 @@ void CPU::executeWrite() {
                     unit->setBusy(false);
                     RegisterIdx dest = unit->getDestReg();
                     getRegisterStatus()->removeFunctionUnitFromRegisterResultMap(dest);
+                    resolveRAWDependence(unit, dest);
                 }
             }
         }
@@ -102,8 +109,8 @@ bool CPU::existWARDependence(std::shared_ptr<FunctionUnit> &functionUnit) {
     for (auto &unit : unitVec) {
         if (unit != functionUnit) {
             if (unit->isBusy()) {
-                if ((unit->getSourceOneReg() == functionUnit->getDestReg() && !unit->isSourceOneRead()) ||
-                    (unit->getSourceTwoReg() == functionUnit->getDestReg() && !unit->isSourceTwoRead())) {
+                if ((unit->getSourceOneReg() == functionUnit->getDestReg() && unit->isSourceOneReady()) ||
+                    (unit->getSourceTwoReg() == functionUnit->getDestReg() && unit->isSourceTwoReady())) {
                     return true;
                 }
             }
@@ -123,6 +130,7 @@ bool CPU::existWAWDependence(RegisterIdx dest) {
 
 void CPU::issueInstruction(std::shared_ptr<FunctionUnit> &functionUnit, std::shared_ptr<Instruction> &instruction) {
     functionUnit->acceptInstruction(instruction);
+    functionUnit->getInstruction()->setStage(Stage::ReadOperand);
     functionUnit->setBusy(true);
     functionUnit->setSourceOneReg(instruction->getSourceOne());
     functionUnit->setSourceTwoReg(instruction->getSourceTwo());
@@ -154,6 +162,20 @@ void CPU::issueInstruction(std::shared_ptr<FunctionUnit> &functionUnit, std::sha
 
     if (!sourceTwoRegSet) {
         functionUnit->setSourceTwoReady(true);
+    }
+}
+
+
+void CPU::resolveRAWDependence(std::shared_ptr<FunctionUnit> &functionUnit, RegisterIdx dest) {
+    for (auto &unit : unitVec) {
+        if (unit != functionUnit && unit->getSourceOneReg() == dest && !unit->isSourceOneReady() &&
+            unit->getInstruction()->getStage() == Stage::ReadOperand) {
+            unit->setSourceOneReady(true);
+        }
+        if (unit != functionUnit && unit->getSourceTwoReady() == dest && !unit->isSourceTwoReady() &&
+            unit->getInstruction()->getStage() == Stage::ReadOperand) {
+            unit->setSourceTwoReady(true);
+        }
     }
 }
 

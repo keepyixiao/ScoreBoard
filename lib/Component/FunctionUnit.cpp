@@ -52,11 +52,11 @@ void FunctionUnit::completedExecution() {
     instruction.reset();
 }
 
-bool FunctionUnit::isSourceOneRead() {
+bool FunctionUnit::isSourceOneReady() {
     return !functionUnitStatus->getSourceOneReady();
 }
 
-bool FunctionUnit::isSourceTwoRead() {
+bool FunctionUnit::isSourceTwoReady() {
     return !functionUnitStatus->getSourceTwoReady();
 }
 
@@ -74,6 +74,14 @@ void FunctionUnit::setSourceOneReady(bool ready) {
 
 void FunctionUnit::setSourceTwoReady(bool ready) {
     functionUnitStatus->setSourceTwoReady(ready);
+}
+
+bool FunctionUnit::getSourceOneReady() {
+    return functionUnitStatus->getSourceOneReady();
+}
+
+bool FunctionUnit::getSourceTwoReady() {
+    return functionUnitStatus->getSourceTwoReady();
 }
 
 

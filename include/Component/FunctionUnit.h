@@ -38,15 +38,19 @@ public:
 
     void setSourceTwoReady(bool ready);
 
+    bool getSourceOneReady();
+
+    bool getSourceTwoReady();
+
     std::shared_ptr<Instruction> &getInstruction();
 
     void acceptInstruction(std::shared_ptr<Instruction> instruction);
 
     void completedExecution();
 
-    bool isSourceOneRead();
+    bool isSourceOneReady();
 
-    bool isSourceTwoRead();
+    bool isSourceTwoReady();
 
 
 private:

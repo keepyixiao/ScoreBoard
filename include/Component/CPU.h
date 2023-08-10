@@ -60,6 +60,8 @@ public:
 
     bool existWAWDependence(RegisterIdx dest);
 
+    void resolveRAWDependence(std::shared_ptr<FunctionUnit> &functionUnit, RegisterIdx dest);
+
     std::unique_ptr<InstructionParser> &getInstructionParser();
 
     std::deque<std::shared_ptr<Instruction>> &getInstructionVec();
