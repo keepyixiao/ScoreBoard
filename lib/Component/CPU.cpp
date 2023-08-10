@@ -23,7 +23,37 @@ bool CPU::terminated() {
 }
 
 void CPU::executeIssue() {
-
+    auto &instruction = InstructionVec.front();
+    if (instruction->getOperation() == Operation::ADDD ||
+        instruction->getOperation() == Operation::SUBD) {
+        if (!AddUnit->isBusy() && !existWAWDependence(instruction->getDest())) {
+            issueInstruction(AddUnit, instruction);
+            InstructionVec.pop_front();
+            onProcessingInstVec.push_back(instruction);
+        }
+    } else if (instruction->getOperation() == Operation::MULD) {
+        if (!MulUnitOne->isBusy() && !existWAWDependence(instruction->getDest())) {
+            issueInstruction(MulUnitOne, instruction);
+            InstructionVec.pop_front();
+            onProcessingInstVec.push_back(instruction);
+        } else if (!MulUnitTwo->isBusy() && !existWAWDependence(instruction->getDest())) {
+            issueInstruction(MulUnitTwo, instruction);
+            InstructionVec.pop_front();
+            onProcessingInstVec.push_back(instruction);
+        }
+    } else if (instruction->getOperation() == Operation::LOAD) {
+        if (!IntegerUnit->isBusy() && !existWAWDependence(instruction->getDest())) {
+            issueInstruction(IntegerUnit, instruction);
+            InstructionVec.pop_front();
+            onProcessingInstVec.push_back(instruction);
+        }
+    } else if (instruction->getOperation() == Operation::DIVD) {
+        if (!DivUnit->isBusy() && !existWAWDependence(instruction->getDest())) {
+            issueInstruction(DivUnit, instruction);
+            InstructionVec.pop_front();
+            onProcessingInstVec.push_back(instruction);
+        }
+    }
 }
 
 void CPU::executeRead() {
@@ -81,6 +111,53 @@ bool CPU::existWARDependence(std::shared_ptr<FunctionUnit> &functionUnit) {
     }
     return false;
 }
+
+bool CPU::existWAWDependence(RegisterIdx dest) {
+    for (auto &unit : unitVec) {
+        if (unit->isBusy() && unit->getDestReg() == dest) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void CPU::issueInstruction(std::shared_ptr<FunctionUnit> &functionUnit, std::shared_ptr<Instruction> &instruction) {
+    functionUnit->acceptInstruction(instruction);
+    functionUnit->setBusy(true);
+    functionUnit->setSourceOneReg(instruction->getSourceOne());
+    functionUnit->setSourceTwoReg(instruction->getSourceTwo());
+    functionUnit->setDestReg(instruction->getDest());
+    functionUnit->setOperation(instruction->getOperation());
+
+    bool sourceOneRegSet = false, sourceTwoRegSet = false;
+    for (auto &unit : unitVec) {
+        if (unit != functionUnit && unit->isBusy()) {
+            if (unit->getDestReg() == functionUnit->getSourceOneReg()) {
+                functionUnit->setSourceOneUnit(unit);
+                functionUnit->setSourceOneReady(false);
+                sourceOneRegSet = true;
+                break;
+            }
+
+            if (unit->getDestReg() == functionUnit->getSourceTwoReg()) {
+                functionUnit->setSourceTwoUnit(unit);
+                functionUnit->setSourceTwoReady(false);
+                sourceTwoRegSet = true;
+                break;
+            }
+        }
+    }
+
+    if (!sourceOneRegSet) {
+        functionUnit->setSourceOneReady(true);
+    }
+
+    if (!sourceTwoRegSet) {
+        functionUnit->setSourceTwoReady(true);
+    }
+}
+
+
 
 
 

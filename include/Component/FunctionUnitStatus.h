@@ -31,13 +31,27 @@ public:
 
     RegisterIdx getSourceOneReg();
 
-    RegisterIdx  getSourceTwoReg();
+    RegisterIdx getSourceTwoReg();
 
-    RegisterIdx  getDestReg();
+    RegisterIdx getDestReg();
 
     bool getSourceOneReady();
 
     bool getSourceTwoReady();
+
+    void setSourceOneReady(bool ready);
+
+    void setSourceTwoReady(bool ready);
+
+    void setSourceOneReg(RegisterIdx sourceOneReg);
+
+    void setSourceTwoReg(RegisterIdx sourceTwoReg);
+
+    void setDestReg(RegisterIdx destReg);
+
+    void setSourceOneUnit(std::shared_ptr<FunctionUnit> &sourceOneUnit);
+
+    void setSourceTwoUnit(std::shared_ptr<FunctionUnit> &sourceTwoUnit);
 
 
 };

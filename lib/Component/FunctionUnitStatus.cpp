@@ -37,6 +37,34 @@ bool FunctionUnitStatus::getSourceTwoReady() {
     return sourceTwoReady;
 }
 
+void FunctionUnitStatus::setSourceOneReady(bool ready) {
+    this->sourceOneReady = ready;
+}
+
+void FunctionUnitStatus::setSourceTwoReady(bool ready) {
+    this->sourceTwoReady = ready;
+}
+
+void FunctionUnitStatus::setSourceOneReg(RegisterIdx sourceOneReg) {
+    this->sourceOne = sourceOneReg;
+}
+
+void FunctionUnitStatus::setSourceTwoReg(RegisterIdx sourceTwoReg) {
+    this->sourceTwo = sourceTwoReg;
+}
+
+void FunctionUnitStatus::setDestReg(RegisterIdx destReg) {
+    this->dest = destReg;
+}
+
+void FunctionUnitStatus::setSourceOneUnit(std::shared_ptr<FunctionUnit> &sourceOneUnit) {
+    this->sourceOneUnit = sourceOneUnit;
+}
+
+void FunctionUnitStatus::setSourceTwoUnit(std::shared_ptr<FunctionUnit> &sourceTwoUnit) {
+    this->sourceTwoUnit = sourceTwoUnit;
+}
+
 
 
 

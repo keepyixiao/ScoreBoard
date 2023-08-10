@@ -54,13 +54,17 @@ public:
 
     void executeWrite();
 
-    bool existWARDependence(std::shared_ptr<FunctionUnit> & functionUnit);
+    void issueInstruction(std::shared_ptr<FunctionUnit> &functionUnit, std::shared_ptr<Instruction> &instruction);
+
+    bool existWARDependence(std::shared_ptr<FunctionUnit> &functionUnit);
+
+    bool existWAWDependence(RegisterIdx dest);
 
     std::unique_ptr<InstructionParser> &getInstructionParser();
 
     std::deque<std::shared_ptr<Instruction>> &getInstructionVec();
 
-    std::unique_ptr<RegisterStatus> & getRegisterStatus();
+    std::unique_ptr<RegisterStatus> &getRegisterStatus();
 
 
 };
